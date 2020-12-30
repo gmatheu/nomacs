@@ -1,0 +1,28 @@
+name: MacOS
+
+on: [push]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+  Qt5_DIR: /usr/local/opt/qt5/
+
+jobs:
+  build:
+    runs-on: macos
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: brew install qt5 exiv2 opencv libraw quazip cmake pkg-config
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DQT_QMAKE_EXECUTABLE=/usr/local/opt/qt5/bin $GITHUB_WORKSPACE/ImageLounge/.  
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      run: cmake --build . --config $BUILD_TYPE
